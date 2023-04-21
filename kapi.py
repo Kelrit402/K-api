@@ -83,12 +83,21 @@ def writestr(scontent,pr='F',ca=True,mr=False,sh=True,loc=None,url=None):
     
 def deletestr(sid):
     request_url = "https://story.kakao.com/a/activities/"+sid+'?_='+gentimecode()
-
     response = requests.delete(request_url,headers = defaultheader())
     if response.status_code == 200:
         return True
     else:
         return False
+    
+def setstr(sid,pr,ca=True,mr=False,sh=True):
+    postdata = 'permission='+pr+'&enable_share='+str(sh).lower()+'&comment_all_writable='+str(ca).lower()+'&is_must_read='+str(mr).lower()
+    request_headers = writeheader(postdata)
+    request_url = "https://story.kakao.com/a/activities/"+sid+"?_="+gentimecode()
+    response = requests.put(request_url, data=postdata, headers = request_headers)
+    if response.status_code == 200:
+        return json.loads(response.text)['sid']
+    else:
+        return None
 
 def isloged():
     request_url = "https://story.kakao.com/a/settings/profile?_="+gentimecode()
@@ -134,12 +143,11 @@ def getfeed():
         return json.loads(response.text)['feeds']
     return None
 
-def newfeed():
+def hasnewfeed():
     request_url = "https://story.kakao.com/a/notifications/new_count?notice_since=&_="+gentimecode()
     response = requests.get(request_url,headers = defaultheader())
     vfeed = json.loads(response.text)
     if response.status_code != 200:
-        print('connection error!!!', response.status_code)
         return False
     return vfeed['has_new_feed']
 
