@@ -152,12 +152,11 @@ def hasnewfeed():
     return vfeed['has_new_feed']
 
 def writecomment(path,content,deco=''):
-    targetid = path.replace('.', '/')
     string = replchars(parse.quote(json.dumps(content)))
     decostring = replchars(parse.quote(deco))
     postdata = 'text='+decostring+'&decorators='+string
     request_headers = writeheader(postdata)
-    request_url = "https://story.kakao.com/a/activities/"+targetid+"/comments?_="+gentimecode()
+    request_url = "https://story.kakao.com/a/activities/"+path+"/comments?_="+gentimecode()
     response = requests.post(request_url, data=postdata, headers = request_headers)
     if response.status_code == 200:
         return True
